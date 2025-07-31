@@ -3,9 +3,17 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Commonwealth Bank Colors */
+  --cba-yellow: #FFCC00;
+  --cba-black: #000000;
+  --cba-dark-gray: #333333;
+  --cba-light-gray: #F5F5F5;
+  --cba-white: #FFFFFF;
+  --cba-yellow-hover: #E6B800;
+  --cba-yellow-light: #FFF9CC;
+
+  color: var(--cba-black);
+  background-color: var(--cba-white);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,56 +21,148 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
+  min-height: 100vh;
+  font-family: inherit;
+}
+
+#root {
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2rem;
   line-height: 1.1;
+  color: var(--cba-black);
+  margin: 0 0 1rem 0;
 }
 
+h2 {
+  font-size: 1.5rem;
+  color: var(--cba-black);
+  margin: 0 0 1rem 0;
+}
+
+/* CBA Button Styles */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  border-radius: 4px;
+  border: 2px solid var(--cba-yellow);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--cba-yellow);
+  color: var(--cba-black);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s ease;
 }
+
 button:hover {
-  border-color: #646cff;
+  background-color: var(--cba-yellow-hover);
+  border-color: var(--cba-yellow-hover);
 }
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid var(--cba-yellow);
+  outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button.secondary {
+  background-color: var(--cba-white);
+  border-color: var(--cba-black);
+  color: var(--cba-black);
+}
+
+button.secondary:hover {
+  background-color: var(--cba-light-gray);
+}
+
+/* Tab Styles */
+.tab-container {
+  border-bottom: 2px solid var(--cba-light-gray);
+  margin-bottom: 2rem;
+}
+
+.tab-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cba-dark-gray);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background-color: var(--cba-yellow-light);
+  color: var(--cba-black);
+}
+
+.tab-button.active {
+  color: var(--cba-black);
+  border-bottom-color: var(--cba-yellow);
+  background-color: var(--cba-yellow-light);
+}
+
+.tab-button:focus,
+.tab-button:focus-visible {
+  outline: 2px solid var(--cba-yellow);
+  outline-offset: -2px;
+}
+
+/* App Layout */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app-header {
+  background-color: var(--cba-yellow);
+  color: var(--cba-black);
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  color: var(--cba-black);
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.tab-content {
+  min-height: 400px;
+}
+
+/* Component Styles */
+.placeholder-section {
+  padding: 2rem;
+  background-color: var(--cba-light-gray);
+  border-radius: 4px;
+  text-align: center;
+  color: var(--cba-dark-gray);
+  margin-top: 1rem;
+}
+
+.component-description {
+  color: var(--cba-dark-gray);
+  margin-bottom: 1rem;
 }

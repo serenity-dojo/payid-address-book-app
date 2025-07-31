@@ -12,7 +12,15 @@
     "test:cucumber": "npx cucumber-js --config cucumber.config.cjs",
     "test:cucumber:dry": "npx cucumber-js --config cucumber.config.cjs --dry-run",
     "test:cucumber:watch": "npx cucumber-js --config cucumber.config.cjs --watch",
-    "test:cucumber:report": "npx cucumber-js --config cucumber.config.cjs && echo '📊 Report generated at reports/cucumber-report.html'"
+    "test:cucumber:report": "npx cucumber-js --config cucumber.config.cjs && echo '📊 Report generated at reports/cucumber-report.html'",
+    "test:playwright": "playwright test",
+    "test:playwright:ui": "playwright test --ui",
+    "test:playwright:headed": "playwright test --headed",
+    "test:unit": "vitest",
+    "test:unit:ui": "vitest --ui",
+    "test:unit:coverage": "vitest --coverage",
+    "test:all": "npm run test:cucumber && npm run test:unit run && npm run test:playwright",
+    "test:all:report": "npm run test:cucumber:report && npm run test:unit run && npm run test:playwright && echo '✅ All tests completed successfully!'"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -22,6 +30,10 @@
     "@cucumber/cucumber": "^12.1.0",
     "@cucumber/html-formatter": "^21.13.0",
     "@eslint/js": "^9.32.0",
+    "@playwright/test": "^1.54.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -33,9 +45,11 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "jsdom": "^26.1.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4"
   }
 }
