@@ -1,6 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import PayeeAddressBook from '../PayeeAddressBook';
+
+// Mock the PayeeList component
+vi.mock('../payee/PayeeList', () => ({
+  default: () => <div data-testid="payee-list">PayeeList Component</div>
+}));
 
 describe('PayeeAddressBook Component', () => {
   it('renders the component title', () => {
@@ -8,18 +13,18 @@ describe('PayeeAddressBook Component', () => {
     expect(screen.getByRole('heading', { name: /saved payees/i })).toBeInTheDocument();
   });
 
-  it('displays placeholder content when no payees exist', () => {
+  it('displays description text', () => {
     render(<PayeeAddressBook />);
     expect(screen.getByText(/your payid address book will be displayed here/i)).toBeInTheDocument();
-    expect(screen.getByText(/no payees found/i)).toBeInTheDocument();
-    expect(screen.getByText(/add your first payid payee/i)).toBeInTheDocument();
   });
 
-  it('has proper CSS classes for styling', () => {
+  it('renders the PayeeList component', () => {
     render(<PayeeAddressBook />);
-    const placeholder = screen.getByText(/no payees found/i).closest('div');
-    expect(placeholder).toHaveClass('placeholder-section');
-    
+    expect(screen.getByTestId('payee-list')).toBeInTheDocument();
+  });
+
+  it('has proper CSS classes', () => {
+    render(<PayeeAddressBook />);
     const description = screen.getByText(/your payid address book will be displayed here/i);
     expect(description).toHaveClass('component-description');
   });

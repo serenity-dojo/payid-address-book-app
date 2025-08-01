@@ -32,8 +32,8 @@ test.describe('PayID Address Book UI Framework', () => {
     await page.expectProperARIAAttributes();
   });
 
-  test('should display placeholder content in both tabs', async () => {
-    await page.expectPlaceholderContent();
+  test('should display payee list content in address book tab', async () => {
+    await page.expectPayeeListContent();
     
     await page.clickAddNewPayeeTab();
     await page.expectAddPayeePlaceholderContent();

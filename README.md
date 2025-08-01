@@ -39,6 +39,48 @@ npm run test:cucumber
 npm run test:cucumber:report
 ```
 
+## 🎭 Demo Mode
+
+The application includes a demo mode with pre-seeded PayID data for development and demonstration purposes.
+
+### Starting Demo Mode
+
+```bash
+# Start development server with demo data
+npm run dev:demo
+
+# Start regular development server (empty data)
+npm run dev
+```
+
+### Demo Mode Features
+
+- **Pre-seeded Data**: 12 realistic PayID payees including:
+  - Email PayIDs: `alexandra.smith@example.com`, `david.chen@gmail.com`
+  - Mobile PayIDs: `0412 784 539`, `0423 567 890` (formatted)
+  - ABN PayIDs: `80123456789`, `90234567890`
+  - Mix of payees with and without nicknames
+
+- **Visual Indicator**: Demo mode displays a banner indicating sample data is being used
+- **Realistic Loading**: 800ms delay simulation for demonstration purposes
+- **Console Logging**: Shows "🎭 Demo mode enabled" message for developers
+
+### Demo Data Examples
+
+| Name | PayID | Type | Nickname |
+|------|-------|------|----------|
+| Alexandra Smith | a.smith@example.com | email | Lexi |
+| Andy Bolton | 0412 784 539 | mobile | AndyB |
+| Fresh Foods Pty Ltd | 80123456789 | abn | - |
+| Grace Liu | grace@business.com.au | email | Gracie |
+
+### Use Cases
+
+- **Development**: Test PayID list functionality without backend setup
+- **Demos**: Show realistic data for stakeholder presentations  
+- **QA Testing**: Consistent dataset for manual testing scenarios
+- **Documentation**: Screenshot generation with meaningful data
+
 ## 🥒 CucumberJS Setup Guide
 
 This section documents the complete setup process for integrating CucumberJS with a React + TypeScript + Vite project.
@@ -128,6 +170,8 @@ Then('she should see the following results:', function (dataTable) {
 ```json
 {
   "scripts": {
+    "dev": "vite",
+    "dev:demo": "vite --mode demo",
     "test:cucumber": "npx cucumber-js --config cucumber.config.cjs",
     "test:cucumber:dry": "npx cucumber-js --config cucumber.config.cjs --dry-run", 
     "test:cucumber:watch": "npx cucumber-js --config cucumber.config.cjs --watch",

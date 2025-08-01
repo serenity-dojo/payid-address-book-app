@@ -166,3 +166,69 @@ button.secondary:hover {
   color: var(--cba-dark-gray);
   margin-bottom: 1rem;
 }
+
+/* PayeeList Styles */
+.payee-list-loading,
+.payee-list-error,
+.payee-list-empty {
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--cba-light-gray);
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.payee-list-loading p {
+  color: var(--cba-dark-gray);
+  font-style: italic;
+}
+
+.payee-list-error p {
+  color: #D32F2F;
+  font-weight: 500;
+}
+
+.payee-list-empty p {
+  color: var(--cba-dark-gray);
+}
+
+.payee-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+}
+
+.payee-item {
+  background-color: var(--cba-white);
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.payee-item:hover {
+  border-color: var(--cba-yellow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--cba-yellow-light);
+}
+
+.payee-item:focus,
+.payee-item:focus-within {
+  outline: 2px solid var(--cba-yellow);
+  outline-offset: 1px;
+}
+
+.payee-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--cba-black);
+  margin-bottom: 0.25rem;
+}
+
+.payee-payid {
+  font-size: 0.875rem;
+  color: var(--cba-dark-gray);
+  font-family: 'Courier New', monospace;
+}

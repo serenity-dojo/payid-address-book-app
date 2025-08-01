@@ -74,8 +74,21 @@ export class PayIDAddressBookPage {
     await expect(this.payeeAddressBookPanel).toHaveAttribute('aria-labelledby', 'address-book-tab');
   }
 
-  async expectPlaceholderContent() {
-    await expect(this.page.locator('text=No payees found')).toBeVisible();
+  async expectPayeeListContent() {
+    // Wait for PayeeList to load and show either loading, empty, or actual payees
+    const payeeListLoading = this.page.locator('.payee-list-loading');
+    const payeeListEmpty = this.page.locator('.payee-list-empty');
+    const payeeList = this.page.locator('.payee-list');
+    
+    // First wait for either loading or content to appear
+    await this.page.waitForSelector('.payee-list-loading, .payee-list-empty, .payee-list', { timeout: 10000 });
+    
+    // One of these should be visible
+    const hasLoading = await payeeListLoading.isVisible();
+    const hasEmpty = await payeeListEmpty.isVisible();
+    const hasList = await payeeList.isVisible();
+    
+    expect(hasLoading || hasEmpty || hasList).toBeTruthy();
   }
 
   async expectAddPayeePlaceholderContent() {

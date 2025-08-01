@@ -71,6 +71,18 @@ The frontend will call the API defined in [`API_SPECIFICATION.md`](API_SPECIFICA
 - Page objects must be used in all Playwright tests
 - Focus only on the PayID address book in this phase
 
+## Demo Mode
+
+The application supports a demo mode for development and demonstration purposes:
+
+- **Start demo mode**: `npm run dev:demo`
+- **Regular mode**: `npm run dev`
+- **Demo data**: 12 realistic PayID payees including emails, mobile numbers, and ABNs
+- **Visual indicator**: Demo mode shows a banner indicating sample data is being used
+- **Demo delay**: Longer loading simulation (800ms) for more realistic demonstration
+
+Demo mode uses pre-seeded payee data defined in `src/data/demoPayees.ts` and enables the `VITE_DEMO_MODE` environment variable.
+
 # important-instruction-reminders
 
 Do what has been asked; nothing more, nothing less.  
