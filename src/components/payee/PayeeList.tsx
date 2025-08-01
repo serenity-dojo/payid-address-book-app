@@ -61,8 +61,9 @@ function PayeeList() {
     <ul className="payee-list" role="list" aria-label="PayID payees">
       {state.payees.map((payee) => (
         <li key={payee.id} className="payee-item" role="listitem">
-          <div className="payee-name">{payee.displayName}</div>
-          <div className="payee-payid">{payee.formattedPayID}</div>
+          <span className="payee-name">{payee.displayName}</span>
+          <span className="payee-separator">•</span>
+          <span className="payee-payid">{payee.formattedPayID}</span>
         </li>
       ))}
     </ul>

@@ -20,7 +20,6 @@ function PayeeAddressBook() {
           🎭 <strong>Demo Mode:</strong> Showing sample PayID data for demonstration purposes
         </div>
       )}
-      <p className="component-description">Your PayID address book will be displayed here.</p>
       <PayeeList />
     </div>
   );

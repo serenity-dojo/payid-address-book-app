@@ -44,7 +44,6 @@ describe('App Component', () => {
     
     // Address book content should be visible initially
     expect(screen.getByText(/saved payees/i)).toBeInTheDocument();
-    expect(screen.getByText(/your payid address book will be displayed here/i)).toBeInTheDocument();
     
     // Click add payee tab
     const addPayeeTab = screen.getByRole('tab', { name: /add new payee/i });
