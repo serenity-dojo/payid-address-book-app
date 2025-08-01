@@ -3,8 +3,11 @@ module.exports = {
     // Feature files location
     paths: ['tests/cucumber/features/**/*.feature'],
     
-    // Step definitions location
-    require: ['tests/cucumber/step-definitions/**/*.cjs'],
+    // Step definitions and support files location
+    require: [
+      'tests/cucumber/support/**/*.cjs',
+      'tests/cucumber/step-definitions/**/*.cjs'
+    ],
     
     // Format options - progress for console, html for report
     format: [

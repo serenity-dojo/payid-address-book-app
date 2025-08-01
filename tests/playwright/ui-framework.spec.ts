@@ -43,7 +43,16 @@ test.describe('PayID Address Book UI Framework', () => {
     await expect(page.payeeAddressBookPanel).toHaveAttribute('aria-labelledby', 'address-book-tab');
   });
 
-  test('should display payee list content in address book tab', async () => {
+  test('should display payee list content in address book tab', async ({ page: playwright }) => {
+    // Mock the API to return empty payees for this test
+    await playwright.route('**/api/payees', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ payees: [] })
+      });
+    });
+
     await page.waitForPayeeListContent();
     
     // Verify one of the payee list states is visible

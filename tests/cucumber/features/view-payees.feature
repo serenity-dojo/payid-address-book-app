@@ -20,9 +20,9 @@ Feature: View Payees in PayID Address Book
         | Display Name                    | PayID               |
         | Alexandra Smith (Lexi)          | a.smith@example.com |
         | Andy Bolton (AndyB)             | 0412 784 539        |
+        | Marcus Williams                 | 0433 859 120        |
         | Sarah Thompson                  | s.thompson@work.com |
         | Willow Finance Pty Ltd (Willow) | 80123456789         |
-        | Marcus Williams                 | 0433 859 120        |
 
   Rule: Payees without nicknames should display name only
 
@@ -36,10 +36,10 @@ Feature: View Payees in PayID Address Book
     Example: Payees without nicknames show name only
       When Rachael views her address book
       Then her payees should be presented as follows:
-        | Display Name    | PayID        |
+        | Display Name    | PayID            |
         | John Mitchell   | john@example.com |
-        | Tech Corp Ltd   | 12345678901  |
-        | Rebecca Johnson | 0456 321 098 |
+        | Rebecca Johnson | 0456 321 098     |
+        | Tech Corp Ltd   | 12345678901      |
 
   Rule: Mobile PayID values should be formatted with spaces in the display
 

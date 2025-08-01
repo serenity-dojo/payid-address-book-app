@@ -4,6 +4,10 @@ import { demoPayees } from '../data/demoPayees';
 // Check if demo mode is enabled
 const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 
+// Check if we're in a browser environment (for API calls)
+// In test environment, window might be defined by jsdom but we still want to use mock data
+const isBrowserEnvironment = typeof window !== 'undefined' && !import.meta.env.VITEST;
+
 // Mock data storage for testing
 let mockPayees: PayeeData[] = isDemoMode ? [...demoPayees] : [];
 
@@ -45,28 +49,56 @@ if (isDemoMode) {
   console.log('🎭 Demo mode enabled - Using pre-seeded payee data');
 }
 
-// Mock API service
+// API service
 export const payeeService = {
   // Get all payees, sorted alphabetically by name
   async getAllPayees(): Promise<DisplayPayee[]> {
-    // Simulate API delay (longer in demo mode for more realistic feel)
-    const delay = isDemoMode ? 800 : 100;
-    await new Promise(resolve => setTimeout(resolve, delay));
-    
-    // Sort by name alphabetically and format for display
-    return mockPayees
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(formatPayeeForDisplay);
+    try {
+      // In demo mode or non-browser environment (testing), use local mock data
+      if (isDemoMode || !isBrowserEnvironment) {
+        // Simulate API delay for realistic feel (shorter for tests)
+        const delay = isDemoMode ? 800 : 100;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+        // Sort by name alphabetically and format for display
+        return mockPayees
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(formatPayeeForDisplay);
+      }
+
+      // Make actual API call in browser environment
+      const response = await fetch('/api/payees');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const payees: PayeeData[] = data.payees || [];
+      
+      // Sort by name alphabetically and format for display
+      return payees
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(formatPayeeForDisplay);
+        
+    } catch (error) {
+      console.error('Error fetching payees:', error);
+      throw new Error('Failed to load payees');
+    }
   },
 
-  // Set mock data (for testing)
+  // Set mock data (for testing - works in demo mode or test environment)
   setMockData(payees: PayeeData[]): void {
-    mockPayees = [...payees];
+    if (isDemoMode || !isBrowserEnvironment) {
+      mockPayees = [...payees];
+    }
   },
 
-  // Clear all payees (for testing empty state)
+  // Clear all payees (for testing empty state - works in demo mode or test environment)
   clearPayees(): void {
-    mockPayees = [];
+    if (isDemoMode || !isBrowserEnvironment) {
+      mockPayees = [];
+    }
   },
 
   // Check if demo mode is enabled
@@ -74,8 +106,8 @@ export const payeeService = {
     return isDemoMode;
   },
 
-  // Get count of loaded payees
+  // Get count of loaded payees (demo mode only)
   getPayeeCount(): number {
-    return mockPayees.length;
+    return isDemoMode ? mockPayees.length : 0;
   }
 };
