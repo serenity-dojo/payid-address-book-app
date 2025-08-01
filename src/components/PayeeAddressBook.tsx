@@ -1,9 +1,28 @@
 
+import { useState } from 'react';
 import PayeeList from './payee/PayeeList';
+import PayeeSearch from './payee/PayeeSearch';
 import { payeeService } from '../services/payeeService';
+import type { DisplayPayee } from '../types/payee';
 
 function PayeeAddressBook() {
+  const [searchResults, setSearchResults] = useState<DisplayPayee[] | undefined>(undefined);
   const isDemoMode = payeeService.isDemoMode();
+
+  const handleSearch = async (searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      setSearchResults(undefined);
+      return;
+    }
+
+    try {
+      const results = await payeeService.searchPayees(searchTerm);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Error searching payees:', error);
+      setSearchResults([]);
+    }
+  };
   
   return (
     <div>
@@ -20,7 +39,8 @@ function PayeeAddressBook() {
           🎭 <strong>Demo Mode:</strong> Showing sample PayID data for demonstration purposes
         </div>
       )}
-      <PayeeList />
+      <PayeeSearch onSearch={handleSearch} />
+      <PayeeList filteredPayees={searchResults} />
     </div>
   );
 }

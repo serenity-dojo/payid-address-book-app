@@ -1,113 +1,122 @@
-import type { PayeeData, DisplayPayee } from '../types/payee';
-import { demoPayees } from '../data/demoPayees';
+import type { DisplayPayee } from '../types/payee';
+import { PAYEE_CONSTANTS } from '../constants/payeeConstants';
+import { formatPayeesForDisplay } from '../utils/payeeUtils';
+import { validateSearchTerm, sanitizeSearchTerm } from '../utils/inputValidation';
+import { PayeeApiService } from './payeeApiService';
+import { PayeeMockService } from './payeeMockService';
 
-// Check if demo mode is enabled
-const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+/**
+ * Main payee service - orchestrates between API and mock services
+ * Handles environment detection and delegates to appropriate service
+ */
+class PayeeService {
+  private readonly apiService: PayeeApiService;
+  private readonly mockService: PayeeMockService;
+  private readonly isBrowserEnvironment: boolean;
 
-// Check if we're in a browser environment (for API calls)
-// In test environment, window might be defined by jsdom but we still want to use mock data
-const isBrowserEnvironment = typeof window !== 'undefined' && !import.meta.env.VITEST;
-
-// Mock data storage for testing
-let mockPayees: PayeeData[] = isDemoMode ? [...demoPayees] : [];
-
-// Format mobile number as Australian format with spaces (0412 345 678)
-function formatMobileNumber(mobile: string): string {
-  // Remove any existing spaces or formatting
-  const digits = mobile.replace(/\D/g, '');
-  
-  // Australian mobile format: 0XXX XXX XXX
-  if (digits.length === 10 && digits.startsWith('0')) {
-    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
-  }
-  
-  // Return original if not standard Australian mobile format  
-  return mobile;
-}
-
-// Convert PayeeData to DisplayPayee with proper formatting
-function formatPayeeForDisplay(payee: PayeeData): DisplayPayee {
-  const displayName = payee.nickname 
-    ? `${payee.name} (${payee.nickname})`
-    : payee.name;
+  constructor() {
+    this.apiService = new PayeeApiService();
+    this.mockService = new PayeeMockService();
     
-  const formattedPayID = payee.payidType === 'mobile' 
-    ? formatMobileNumber(payee.payid)
-    : payee.payid;
+    // Check if we're in a browser environment (for API calls)
+    // In test environment, window might be defined by jsdom but we still want to use mock data
+    this.isBrowserEnvironment = typeof window !== 'undefined' && !import.meta.env.VITEST;
+  }
 
-  return {
-    id: payee.id,
-    displayName,
-    formattedPayID,
-    rawPayID: payee.payid,
-    payidType: payee.payidType
-  };
-}
-
-// Log demo mode status
-if (isDemoMode) {
-  console.log('🎭 Demo mode enabled - Using pre-seeded payee data');
-}
-
-// API service
-export const payeeService = {
-  // Get all payees, sorted alphabetically by name
+  /**
+   * Get all payees, sorted alphabetically by name
+   */
   async getAllPayees(): Promise<DisplayPayee[]> {
     try {
-      // In demo mode or non-browser environment (testing), use local mock data
-      if (isDemoMode || !isBrowserEnvironment) {
-        // Simulate API delay for realistic feel (shorter for tests)
-        const delay = isDemoMode ? 800 : 100;
-        await new Promise(resolve => setTimeout(resolve, delay));
-        
-        // Sort by name alphabetically and format for display
-        return mockPayees
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map(formatPayeeForDisplay);
-      }
-
-      // Make actual API call in browser environment
-      const response = await fetch('/api/payees');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      const payees: PayeeData[] = data.payees || [];
-      
-      // Sort by name alphabetically and format for display
-      return payees
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(formatPayeeForDisplay);
-        
+      const payees = await this.getPayeeData();
+      return formatPayeesForDisplay(payees);
     } catch (error) {
       console.error('Error fetching payees:', error);
-      throw new Error('Failed to load payees');
+      throw new Error(PAYEE_CONSTANTS.ERRORS.LOAD_FAILED);
     }
-  },
-
-  // Set mock data (for testing - works in demo mode or test environment)
-  setMockData(payees: PayeeData[]): void {
-    if (isDemoMode || !isBrowserEnvironment) {
-      mockPayees = [...payees];
-    }
-  },
-
-  // Clear all payees (for testing empty state - works in demo mode or test environment)
-  clearPayees(): void {
-    if (isDemoMode || !isBrowserEnvironment) {
-      mockPayees = [];
-    }
-  },
-
-  // Check if demo mode is enabled
-  isDemoMode(): boolean {
-    return isDemoMode;
-  },
-
-  // Get count of loaded payees (demo mode only)
-  getPayeeCount(): number {
-    return isDemoMode ? mockPayees.length : 0;
   }
-};
+
+  /**
+   * Search payees by query term
+   */
+  async searchPayees(query: string): Promise<DisplayPayee[]> {
+    // Validate and sanitize input
+    const validation = validateSearchTerm(query);
+    if (!validation.isValid) {
+      throw new Error(validation.error || PAYEE_CONSTANTS.ERRORS.INVALID_SEARCH_TERM);
+    }
+
+    const sanitizedQuery = sanitizeSearchTerm(query);
+    if (!sanitizedQuery || sanitizedQuery.length === 0) {
+      return [];
+    }
+
+    try {
+      const payees = await this.searchPayeeData(sanitizedQuery);
+      return formatPayeesForDisplay(payees);
+    } catch (error) {
+      console.error('Error searching payees:', error);
+      throw new Error(PAYEE_CONSTANTS.ERRORS.SEARCH_FAILED);
+    }
+  }
+
+  /**
+   * Set mock data (for testing - works in demo mode or test environment)
+   */
+  setMockData(payees: any[]): void {
+    if (!this.shouldUseApi()) {
+      this.mockService.setMockData(payees);
+    }
+  }
+
+  /**
+   * Clear all payees (for testing empty state - works in demo mode or test environment)
+   */
+  clearPayees(): void {
+    if (!this.shouldUseApi()) {
+      this.mockService.clearPayees();
+    }
+  }
+
+  /**
+   * Check if demo mode is enabled
+   */
+  isDemoMode(): boolean {
+    return this.mockService.isDemoModeEnabled();
+  }
+
+  /**
+   * Get count of loaded payees (demo mode only)
+   */
+  getPayeeCount(): number {
+    return this.mockService.getPayeeCount();
+  }
+
+  /**
+   * Determine if we should use API or mock service
+   */
+  private shouldUseApi(): boolean {
+    return this.isBrowserEnvironment && !this.isDemoMode();
+  }
+
+  /**
+   * Get payee data from appropriate service
+   */
+  private async getPayeeData() {
+    return this.shouldUseApi() 
+      ? await this.apiService.getAllPayees()
+      : await this.mockService.getAllPayees();
+  }
+
+  /**
+   * Search payee data from appropriate service
+   */
+  private async searchPayeeData(query: string) {
+    return this.shouldUseApi()
+      ? await this.apiService.searchPayees(query)
+      : await this.mockService.searchPayees(query);
+  }
+}
+
+// Export singleton instance
+export const payeeService = new PayeeService();

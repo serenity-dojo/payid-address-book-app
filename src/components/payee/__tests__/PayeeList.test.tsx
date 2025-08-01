@@ -144,4 +144,71 @@ describe('PayeeList Component', () => {
       expect(listItems[2]).toHaveTextContent('Zoe Adams (Z)');
     });
   });
+
+  it('should display filtered payees when filteredPayees prop is provided', async () => {
+    const filteredPayees: DisplayPayee[] = [
+      {
+        id: '1',
+        displayName: 'Alice Brown',
+        formattedPayID: 'alice@example.com',
+        rawPayID: 'alice@example.com',
+        payidType: 'email'
+      }
+    ];
+
+    render(<PayeeList filteredPayees={filteredPayees} />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Alice Brown')).toBeInTheDocument();
+      expect(screen.getByText('alice@example.com')).toBeInTheDocument();
+    });
+
+    // Should not call getAllPayees when filteredPayees is provided
+    expect(mockPayeeService.getAllPayees).not.toHaveBeenCalled();
+  });
+
+  it('should display empty state for filtered results when no matches', async () => {
+    render(<PayeeList filteredPayees={[]} />);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/no payees found/i)).toBeInTheDocument();
+    });
+
+    // Should not call getAllPayees when filteredPayees is provided
+    expect(mockPayeeService.getAllPayees).not.toHaveBeenCalled();
+  });
+
+  it('should prefer filteredPayees over service data when both are available', async () => {
+    const servicePayees: DisplayPayee[] = [
+      {
+        id: '1',
+        displayName: 'Service Payee',
+        formattedPayID: 'service@example.com',
+        rawPayID: 'service@example.com',
+        payidType: 'email'
+      }
+    ];
+
+    const filteredPayees: DisplayPayee[] = [
+      {
+        id: '2',
+        displayName: 'Filtered Payee',
+        formattedPayID: 'filtered@example.com',
+        rawPayID: 'filtered@example.com',
+        payidType: 'email'
+      }
+    ];
+
+    mockPayeeService.getAllPayees.mockResolvedValue(servicePayees);
+
+    render(<PayeeList filteredPayees={filteredPayees} />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Filtered Payee')).toBeInTheDocument();
+      expect(screen.queryByText('Service Payee')).not.toBeInTheDocument();
+    });
+
+    // Should not call getAllPayees when filteredPayees is provided
+    expect(mockPayeeService.getAllPayees).not.toHaveBeenCalled();
+  });
 });

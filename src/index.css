@@ -242,3 +242,123 @@ button.secondary:hover {
   font-family: 'Courier New', monospace;
   flex-shrink: 0;
 }
+
+/* Search Component Styles */
+.payee-search {
+  margin-bottom: 1.5rem;
+}
+
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-input-container {
+  position: relative;
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 2px solid var(--cba-dark-gray);
+  border-radius: 4px;
+  background-color: var(--cba-white);
+  color: var(--cba-black);
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--cba-yellow);
+  box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
+}
+
+.clear-search-button {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--cba-dark-gray);
+  cursor: pointer;
+  padding: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.clear-search-button:hover {
+  background-color: var(--cba-light-gray);
+}
+
+.search-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 600;
+  background-color: var(--cba-yellow);
+  color: var(--cba-black);
+  border: 2px solid var(--cba-yellow);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.search-button:hover:not(:disabled) {
+  background-color: var(--cba-yellow-hover);
+  border-color: var(--cba-yellow-hover);
+}
+
+.search-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Suggestions Dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--cba-white);
+  border: 2px solid var(--cba-dark-gray);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid var(--cba-light-gray);
+  transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background-color: var(--cba-yellow-light);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
