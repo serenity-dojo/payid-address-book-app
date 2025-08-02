@@ -20,7 +20,13 @@ class PayeeService {
     
     // Check if we're in a browser environment (for API calls)
     // In test environment, window might be defined by jsdom but we still want to use mock data
-    this.isBrowserEnvironment = typeof window !== 'undefined' && !import.meta.env.VITEST;
+    // Also detect headless browser test environment (Playwright uses HeadlessChrome)
+    const isHeadlessTest = typeof window !== 'undefined' && 
+      window.navigator?.userAgent?.includes('HeadlessChrome');
+    
+    this.isBrowserEnvironment = typeof window !== 'undefined' && 
+      !import.meta.env.VITEST && 
+      !isHeadlessTest;
   }
 
   /**

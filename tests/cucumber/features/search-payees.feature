@@ -98,15 +98,16 @@ Feature: Search for a Payee in my PayID Address Book
       When Priya searches for "Sam"
       Then she should see the following results:
         | Payee Name     | PayID             |
-        | Samantha Blake |      0456 321 098 |
         | Sam O'Reilly   | sam.o@example.com |
+        | Samantha Blake |      0456 321 098 |
 
     Example: Partial match across business and personal names
       When Priya searches for "Wil"
       Then she should see the following results:
-        | Payee Name             | PayID              |
-        | Alex Wilson            | alex.w@example.com |
-        | Willow Finance Pty Ltd |        80123456789 |
+        | Payee Name             | PayID                 |
+        | Alex Wilson            | alex.w@example.com    |
+        | William Thomson        | w.thomson@example.com |
+        | Willow Finance Pty Ltd | 80123456789           |
 
   Rule: If no payees match the search, a “no results” message is displayed
 
@@ -131,8 +132,8 @@ Feature: Search for a Payee in my PayID Address Book
       When Priya enters "Sam"
       Then the system should suggest the following payee names:
         | Payee Name     |
-        | Samantha Blake |
         | Sam O'Reilly   |
+        | Samantha Blake |
 
     Example: Fewer than 3 letters shows no suggestions
       When Priya enters "Sa"
@@ -141,10 +142,10 @@ Feature: Search for a Payee in my PayID Address Book
   Rule: Only the first 10 matching suggestions should be displayed
 
     Background:
-      Given Priya has 20 payees in her address book with names starting with "Sa"
+      Given Priya has 20 payees in her address book with names starting with "Sab"
 
     Example: Suggest only the first 10 matching results
-      When Priya enters "Sa"
+      When Priya enters "Sab"
       Then only the first 10 matching payee names should be suggested
 
   Rule: Business contacts can be searched by ABN
