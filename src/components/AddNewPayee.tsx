@@ -5,30 +5,29 @@ import { PayidValidationService } from '../services/payidValidationService';
 import { PayIDType } from '../types/payid';
 import type { PayeeData } from '../types/payee';
 import type { PayIDValidationResult } from '../types/payid';
+import './AddNewPayee.css';
 
 interface Props {
   onSuccess: (payee: PayeeData) => void;
   onCancel: () => void;
 }
 
+type Step = 'enter-payid' | 'confirm-payee';
+
 interface FormData {
-  name: string;
-  nickname: string;
   payidType: 'email' | 'mobile' | 'abn';
   payid: string;
 }
 
 interface FormErrors {
-  name?: string;
   payid?: string;
   validation?: string;
   submission?: string;
 }
 
 function AddNewPayee({ onSuccess, onCancel }: Props) {
+  const [step, setStep] = useState<Step>('enter-payid');
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    nickname: '',
     payidType: 'email',
     payid: ''
   });
@@ -37,40 +36,74 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
   const [isValidating, setIsValidating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationResult, setValidationResult] = useState<PayIDValidationResult | null>(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const validationService = useRef(new PayidValidationService());
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Payee name is required';
+  const validatePayIDFormat = (payid: string, type: string): boolean => {
+    if (type === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(payid);
+    } else if (type === 'mobile') {
+      const mobileRegex = /^04\d{8}$/;
+      const cleanMobile = payid.replace(/[^0-9]/g, '');
+      return mobileRegex.test(cleanMobile);
+    } else if (type === 'abn') {
+      const abnRegex = /^\d{11}$/;
+      return abnRegex.test(payid);
+    }
+    return false;
+  };
+
+  // Demo mode validation - accept most valid formats except special test cases
+  const getDemoValidationResult = (payid: string, type: string): PayIDValidationResult => {
+    // Special test cases for error conditions
+    if (payid === 'disabled@example.com') {
+      return {
+        isValid: false,
+        error: 'PAYID_INACTIVE',
+        payee: {
+          payId: payid,
+          payIdType: PayIDType.EMAIL,
+          payIdOwnerCommonName: 'Disabled User',
+          status: 'DISABLED',
+          nppReachable: false
+        }
+      };
     }
     
-    if (!formData.payid.trim()) {
-      newErrors.payid = 'PayID is required';
-    } else {
-      // Format validation based on type
-      if (formData.payidType === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.payid)) {
-          newErrors.payid = 'Please enter a valid email address';
-        }
-      } else if (formData.payidType === 'mobile') {
-        const mobileRegex = /^04\d{8}$/;
-        const cleanMobile = formData.payid.replace(/[^0-9]/g, '');
-        if (!mobileRegex.test(cleanMobile)) {
-          newErrors.payid = 'Please enter a valid Australian mobile number';
-        }
-      } else if (formData.payidType === 'abn') {
-        const abnRegex = /^\d{11}$/;
-        if (!abnRegex.test(formData.payid)) {
-          newErrors.payid = 'Please enter a valid 11-digit ABN';
-        }
-      }
+    if (payid === 'notfound@example.com') {
+      return { isValid: false, error: 'PAYID_NOT_FOUND' };
     }
     
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (payid === 'invalid@format') {
+      return { 
+        isValid: false, 
+        error: 'INVALID_PAYID_FORMAT',
+        expectedFormat: 'user@domain.com (maximum 256 characters, lowercase)'
+      };
+    }
+
+    // For valid formats, generate a demo response
+    if (validatePayIDFormat(payid, type)) {
+      const name = type === 'email' 
+        ? payid.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        : type === 'mobile'
+        ? `Mobile User ${payid.slice(-4)}`
+        : `Business ${payid.slice(-4)} Pty Ltd`;
+        
+      return {
+        isValid: true,
+        payee: {
+          payId: payid,
+          payIdType: type.toUpperCase() as PayIDType,
+          payIdOwnerCommonName: name,
+          status: 'ACTIVE',
+          nppReachable: true
+        }
+      };
+    }
+    
+    return { isValid: false, error: 'INVALID_PAYID_FORMAT' };
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -79,6 +112,8 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
     // Clear validation result when PayID or type changes
     if (field === 'payid' || field === 'payidType') {
       setValidationResult(null);
+      setStep('enter-payid');
+      setIsConfirmed(false);
     }
     
     // Clear field-specific errors
@@ -87,29 +122,21 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
     }
   };
 
-  const handleInputBlur = (field: keyof FormData) => {
-    // Validate individual fields on blur
-    if (field === 'name' && !formData.name.trim()) {
-      setErrors(prev => ({ ...prev, name: 'Payee name is required' }));
-    } else if (field === 'payid' && formData.payid.trim()) {
-      // Validate format
-      if (formData.payidType === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.payid)) {
-          setErrors(prev => ({ ...prev, payid: 'Please enter a valid email address' }));
-        }
-      } else if (formData.payidType === 'mobile') {
-        const mobileRegex = /^04\d{8}$/;
-        const cleanMobile = formData.payid.replace(/[^0-9]/g, '');
-        if (!mobileRegex.test(cleanMobile)) {
-          setErrors(prev => ({ ...prev, payid: 'Please enter a valid Australian mobile number' }));
-        }
-      } else if (formData.payidType === 'abn') {
-        const abnRegex = /^\d{11}$/;
-        if (!abnRegex.test(formData.payid)) {
-          setErrors(prev => ({ ...prev, payid: 'Please enter a valid 11-digit ABN' }));
-        }
-      }
+  const handlePayIDTypeSelect = (type: 'email' | 'mobile' | 'abn') => {
+    handleInputChange('payidType', type);
+  };
+
+  const handleInputBlur = () => {
+    // Validate PayID format on blur
+    if (formData.payid.trim() && !validatePayIDFormat(formData.payid, formData.payidType)) {
+      const errorMessage = formData.payidType === 'email' 
+        ? 'Please enter a valid email address'
+        : formData.payidType === 'mobile'
+        ? 'Please enter a valid Australian mobile number'
+        : 'Please enter a valid 11-digit ABN';
+      setErrors(prev => ({ ...prev, payid: errorMessage }));
+    } else {
+      setErrors(prev => ({ ...prev, payid: undefined }));
     }
   };
 
@@ -119,16 +146,32 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
       return;
     }
 
+    if (!validatePayIDFormat(formData.payid, formData.payidType)) {
+      return; // Error already shown from blur validation
+    }
+
     setIsValidating(true);
     setErrors(prev => ({ ...prev, validation: undefined }));
 
     try {
-      const payIdType = formData.payidType.toUpperCase() as PayIDType;
-      const result = await validationService.current.validatePayID(formData.payid, payIdType);
+      // Check if we're in demo mode
+      const isDemoMode = payeeService.isDemoMode();
+      let result: PayIDValidationResult;
+      
+      if (isDemoMode) {
+        // Use demo validation
+        result = getDemoValidationResult(formData.payid, formData.payidType);
+      } else {
+        // Use real API validation
+        const payIdType = formData.payidType.toUpperCase() as PayIDType;
+        result = await validationService.current.validatePayID(formData.payid, payIdType);
+      }
       
       setValidationResult(result);
       
-      if (!result.isValid) {
+      if (result.isValid) {
+        setStep('confirm-payee');
+      } else {
         let errorMessage = 'PayID validation failed';
         switch (result.error) {
           case 'PAYID_NOT_FOUND':
@@ -159,15 +202,14 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
     }
   };
 
+  const handleConfirmationChange = (confirmed: boolean) => {
+    setIsConfirmed(confirmed);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
-
-    if (!validationResult?.isValid) {
-      setErrors(prev => ({ ...prev, submission: 'Please validate PayID first' }));
+    if (!validationResult?.isValid || !isConfirmed) {
       return;
     }
 
@@ -176,10 +218,9 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
 
     try {
       const payeeData = {
-        name: formData.name.trim(),
+        name: validationResult.payee!.payIdOwnerCommonName,
         payid: formData.payid.trim(),
-        payidType: formData.payidType,
-        ...(formData.nickname.trim() && { nickname: formData.nickname.trim() })
+        payidType: formData.payidType
       };
 
       const addedPayee = await payeeService.addPayee(payeeData);
@@ -191,135 +232,160 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
     }
   };
 
-  const handleAddPayeeClick = (e: React.MouseEvent) => {
-    // Always validate when button is clicked
-    if (!validateForm() || !validationResult?.isValid) {
-      e.preventDefault();
-      return;
-    }
+  const handleBackToPayIDEntry = () => {
+    setStep('enter-payid');
+    setValidationResult(null);
+    setIsConfirmed(false);
+    setErrors({});
   };
 
-  const canSubmit = validationResult?.isValid && !isSubmitting && !isValidating;
+  const handleCancel = () => {
+    // Reset everything to initial state
+    setStep('enter-payid');
+    setFormData({
+      payidType: 'email',
+      payid: ''
+    });
+    setValidationResult(null);
+    setIsConfirmed(false);
+    setErrors({});
+  };
+
+  const canValidate = formData.payid.trim() !== '' && !isValidating;
+  const canSubmit = validationResult?.isValid && isConfirmed && !isSubmitting;
 
   return (
     <div>
       <h2>Add New Payee</h2>
-      <p className="component-description">Add a new PayID payee to your address book.</p>
       
       <form role="form" onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="payee-name">
-            Payee Name *
-          </label>
-          <input
-            id="payee-name"
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            onBlur={() => handleInputBlur('name')}
-            required
-            aria-describedby="name-help"
-          />
-          <div id="name-help">
-            {errors.name && (
-              <div role="alert" style={{ color: 'red' }}>
-                {errors.name}
+        {step === 'enter-payid' && (
+          <>
+            <div className="payid-type-selector">
+              <div className="payid-type-buttons">
+                <button
+                  type="button"
+                  className={`payid-type-button ${formData.payidType === 'email' ? 'active' : ''}`}
+                  onClick={() => handlePayIDTypeSelect('email')}
+                  aria-pressed={formData.payidType === 'email'}
+                >
+                  <span className="icon">📧</span>
+                  <span>Email</span>
+                </button>
+                <button
+                  type="button"
+                  className={`payid-type-button ${formData.payidType === 'mobile' ? 'active' : ''}`}
+                  onClick={() => handlePayIDTypeSelect('mobile')}
+                  aria-pressed={formData.payidType === 'mobile'}
+                >
+                  <span className="icon">📱</span>
+                  <span>Mobile</span>
+                </button>
+                <button
+                  type="button"
+                  className={`payid-type-button ${formData.payidType === 'abn' ? 'active' : ''}`}
+                  onClick={() => handlePayIDTypeSelect('abn')}
+                  aria-pressed={formData.payidType === 'abn'}
+                >
+                  <span className="icon">🏢</span>
+                  <span>ABN</span>
+                </button>
               </div>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="nickname">
-            Nickname (optional)
-          </label>
-          <input
-            id="nickname"
-            type="text"
-            value={formData.nickname}
-            onChange={(e) => handleInputChange('nickname', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="payid-type">
-            PayID Type *
-          </label>
-          <select
-            id="payid-type"
-            value={formData.payidType}
-            onChange={(e) => handleInputChange('payidType', e.target.value as 'email' | 'mobile' | 'abn')}
-          >
-            <option value="email">EMAIL</option>
-            <option value="mobile">MOBILE</option>
-            <option value="abn">ABN</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="payid">
-            PayID *
-          </label>
-          <input
-            id="payid"
-            type="text"
-            value={formData.payid}
-            onChange={(e) => handleInputChange('payid', e.target.value)}
-            onBlur={() => handleInputBlur('payid')}
-            required
-            aria-describedby={errors.payid ? 'payid-error' : undefined}
-          />
-          {errors.payid && (
-            <div id="payid-error" role="alert" style={{ color: 'red' }}>
-              {errors.payid}
             </div>
-          )}
-        </div>
 
-        <div>
-          <button
-            type="button"
-            onClick={handleValidatePayID}
-            disabled={isValidating || !formData.payid.trim()}
-          >
-            {isValidating ? 'Validating...' : 'Validate PayID'}
-          </button>
-        </div>
+            <div className="payid-input-group">
+              <input
+                id="payid"
+                type="text"
+                className="payid-input"
+                value={formData.payid}
+                onChange={(e) => handleInputChange('payid', e.target.value)}
+                onBlur={handleInputBlur}
+                placeholder={
+                  formData.payidType === 'email' ? 'user@example.com' :
+                  formData.payidType === 'mobile' ? '0412 345 678' : '12345678901'
+                }
+                aria-describedby={errors.payid ? 'payid-error' : undefined}
+              />
+              {errors.payid && (
+                <div id="payid-error" role="alert" className="error-message">
+                  {errors.payid}
+                </div>
+              )}
+            </div>
 
-        {validationResult?.isValid && (
-          <div style={{ color: 'green' }}>
-            <p>PayID validated successfully</p>
-            <p>Owner: {validationResult.payee?.payIdOwnerCommonName}</p>
-          </div>
+            <div className="form-actions">
+              <button
+                type="button"
+                onClick={handleValidatePayID}
+                disabled={!canValidate}
+                className="validate-button"
+              >
+                {isValidating ? 'Validating...' : 'Validate PayID'}
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 'confirm-payee' && validationResult?.isValid && (
+          <>
+            <div className="validation-result">
+              <div className="success-message">
+                <h3>PayID Found</h3>
+                <p><strong>Name:</strong> {validationResult.payee?.payIdOwnerCommonName}</p>
+                <p><strong>PayID:</strong> {formData.payid}</p>
+                <p><strong>Type:</strong> {formData.payidType.toUpperCase()}</p>
+              </div>
+              
+              <div className="confirmation-checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isConfirmed}
+                    onChange={(e) => handleConfirmationChange(e.target.checked)}
+                  />
+                  <span>I confirm this is the correct payee</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="form-actions confirmation-actions">
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                className="add-payee-button"
+              >
+                {isSubmitting ? 'Adding...' : 'Add Payee'}
+              </button>
+              <button
+                type="button"
+                onClick={handleBackToPayIDEntry}
+                className="back-button"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="cancel-button"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
         )}
 
         {errors.validation && (
-          <div role="alert" style={{ color: 'red' }}>
+          <div role="alert" className="error-message">
             {errors.validation}
           </div>
         )}
 
         {errors.submission && (
-          <div role="alert" style={{ color: 'red' }}>
+          <div role="alert" className="error-message">
             {errors.submission}
           </div>
         )}
-
-        <div>
-          <button
-            type="submit"
-            onClick={handleAddPayeeClick}
-          >
-            {isSubmitting ? 'Adding...' : 'Add Payee'}
-          </button>
-          
-          <button
-            type="button"
-            onClick={onCancel}
-          >
-            Cancel
-          </button>
-        </div>
       </form>
     </div>
   );

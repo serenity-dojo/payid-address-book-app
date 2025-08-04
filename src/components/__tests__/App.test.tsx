@@ -23,17 +23,17 @@ describe('App Component', () => {
 
   it('switches tabs when clicked', () => {
     render(<App />);
-    
+
     const addressBookTab = screen.getByRole('tab', { name: /payee address book/i });
     const addPayeeTab = screen.getByRole('tab', { name: /add new payee/i });
-    
+
     // Initially address book should be active
     expect(addressBookTab).toHaveAttribute('aria-selected', 'true');
     expect(addPayeeTab).toHaveAttribute('aria-selected', 'false');
-    
+
     // Click add payee tab
     fireEvent.click(addPayeeTab);
-    
+
     // Add payee should now be active
     expect(addPayeeTab).toHaveAttribute('aria-selected', 'true');
     expect(addressBookTab).toHaveAttribute('aria-selected', 'false');
@@ -41,31 +41,30 @@ describe('App Component', () => {
 
   it('displays correct content for each tab', () => {
     render(<App />);
-    
+
     // Address book content should be visible initially
     expect(screen.getByText(/saved payees/i)).toBeInTheDocument();
-    
+
     // Click add payee tab
     const addPayeeTab = screen.getByRole('tab', { name: /add new payee/i });
     fireEvent.click(addPayeeTab);
-    
+
     // Add payee content should now be visible - check for form elements
     expect(screen.getByRole('heading', { name: /add new payee/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/payee name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/payid type/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('user@example.com')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /validate payid/i })).toBeInTheDocument();
   });
 
   it('has proper ARIA attributes for accessibility', () => {
     render(<App />);
-    
+
     const tabList = screen.getByRole('tablist');
     expect(tabList).toHaveAttribute('aria-label', 'PayID Address Book Navigation');
-    
+
     const addressBookTab = screen.getByRole('tab', { name: /payee address book/i });
     expect(addressBookTab).toHaveAttribute('aria-controls', 'address-book-panel');
     expect(addressBookTab).toHaveAttribute('id', 'address-book-tab');
-    
+
     const panel = screen.getByRole('tabpanel');
     expect(panel).toHaveAttribute('aria-labelledby', 'address-book-tab');
   });
