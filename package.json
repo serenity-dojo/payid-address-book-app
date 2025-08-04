@@ -22,7 +22,7 @@
     "test:unit": "vitest",
     "test:unit:ui": "vitest --ui",
     "test:unit:coverage": "vitest --coverage",
-    "test:all": "npm run test:unit run && npm run test:playwright && test:cucumber:with-server",
+    "test:all": "npm run test:unit run && npm run test:playwright && npm run test:cucumber:with-server",
     "test:all:report": "npm run npm run test:unit run && npm run test:playwright && test:cucumber:with-server-and-report && echo '✅ All tests completed successfully!'"
   },
   "dependencies": {

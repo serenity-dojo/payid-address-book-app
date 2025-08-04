@@ -8,8 +8,8 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name      | PayID               | PayID Type | Nickname |
-        | Alexandra Smith | a.smith@example.com | email      | Lexi     |
-        | Andy Bolton     |        0412 784 539 | mobile     | AndyB    |
+        | Alexandra Smith | a.smith@example.com | EMAIL      | Lexi     |
+        | Andy Bolton     |        0412 784 539 | TELEPHONE  | AndyB    |
 
     Example: Search by nickname
       When Priya searches for "Lexi"
@@ -34,9 +34,9 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name             | PayID               | PayID Type | Nickname |
-        | Alexandra Smith        | a.smith@example.com | email      | Lexi     |
-        | Andy Bolton            |        0412 784 539 | mobile     | AndyB    |
-        | Willow Finance Pty Ltd |         80123456789 | abn        | Willow   |
+        | Alexandra Smith        | a.smith@example.com | EMAIL      | Lexi     |
+        | Andy Bolton            |        0412 784 539 | TELEPHONE  | AndyB    |
+        | Willow Finance Pty Ltd |         80123456789 | ABN        | Willow   |
 
     Scenario Outline: Search returns correct payee by identifier
       When Priya searches for "<searchTerm>"
@@ -46,10 +46,10 @@ Feature: Search for a Payee in my PayID Address Book
 
       Examples:
         | searchTerm          | payeeName              | payID               | PayID Type |
-        | Lexi                | Alexandra Smith        | a.smith@example.com | nickname   |
-        | a.smith@example.com | Alexandra Smith        | a.smith@example.com | email      |
-        |        0412 784 539 | Andy Bolton            |        0412 784 539 | mobile     |
-        |         80123456789 | Willow Finance Pty Ltd |         80123456789 | abn        |
+        | Lexi                | Alexandra Smith        | a.smith@example.com | EMAIL      |
+        | a.smith@example.com | Alexandra Smith        | a.smith@example.com | EMAIL      |
+        |        0412 784 539 | Andy Bolton            |        0412 784 539 | TELEPHONE  |
+        |         80123456789 | Willow Finance Pty Ltd |         80123456789 | ABN        |
 
     Scenario Outline: Mobile number is normalised and matched regardless of formatting
       Given Priya has the following payees in her address book:
@@ -72,9 +72,9 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name      | PayID               | PayID Type | Nickname |
-        | Alex Wilson     | alex.w@example.com  | email      |          |
-        | Alexandra Smith | a.smith@example.com | email      | Lexi     |
-        | Andy Bolton     |        0412 784 539 | mobile     | AndyB    |
+        | Alex Wilson     | alex.w@example.com  | EMAIL      |          |
+        | Alexandra Smith | a.smith@example.com | EMAIL      | Lexi     |
+        | Andy Bolton     |        0412 784 539 | TELEPHONE  | AndyB    |
 
     Example: Lowercase search matches mixed case names
       When Priya searches for "alex"
@@ -88,11 +88,11 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name             | PayID                 | PayID Type | Nickname |
-        | Samantha Blake         |          0456 321 098 | mobile     | SamB     |
-        | Sam O'Reilly           | sam.o@example.com     | email      | Sammy    |
-        | William Thomson        | w.thomson@example.com | email      | Bill     |
-        | Willow Finance Pty Ltd |           80123456789 | abn        | Willow   |
-        | Alex Wilson            | alex.w@example.com    | email      |          |
+        | Samantha Blake         |          0456 321 098 | TELEPHONE  | SamB     |
+        | Sam O'Reilly           | sam.o@example.com     | EMAIL      | Sammy    |
+        | William Thomson        | w.thomson@example.com | EMAIL      | Bill     |
+        | Willow Finance Pty Ltd |           80123456789 | ABN        | Willow   |
+        | Alex Wilson            | alex.w@example.com    | EMAIL      |          |
 
     Example: Partial match on first name
       When Priya searches for "Sam"
@@ -114,7 +114,7 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name  | PayID              | PayID Type | Nickname |
-        | Alex Wilson | alex.w@example.com | email      |          |
+        | Alex Wilson | alex.w@example.com | EMAIL      |          |
 
     Example: Search with no matches
       When Priya searches for "XYZ"
@@ -125,8 +125,8 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name     | PayID               | PayID Type | Nickname |
-        | Samantha Blake | s.blake@example.com | email      | SamB     |
-        | Sam O'Reilly   |        0433 859 120 | mobile     | Sammy    |
+        | Samantha Blake | s.blake@example.com | EMAIL      | SamB     |
+        | Sam O'Reilly   |          0433859120 | TELEPHONE  | Sammy    |
 
     Example: Three or more letters triggers suggestions
       When Priya enters "Sam"
@@ -153,7 +153,7 @@ Feature: Search for a Payee in my PayID Address Book
     Background:
       Given Priya has the following payees in her address book:
         | Payee Name             | PayID       | PayID Type | Nickname |
-        | Willow Finance Pty Ltd | 80123456789 | abn        | Willow   |
+        | Willow Finance Pty Ltd | 80123456789 | ABN        | Willow   |
 
     Example: Search by ABN returns business contact
       When Priya searches for "80123456789"

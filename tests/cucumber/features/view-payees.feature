@@ -8,19 +8,19 @@ Feature: View Payees in PayID Address Book
     Background:
       Given Rachael has the following payees in her address book:
         | Payee Name             | PayID               | PayID Type | Nickname |
-        | Alexandra Smith        | a.smith@example.com | email      | Lexi     |
-        | Andy Bolton            |          0412784539 | mobile     | AndyB    |
-        | Sarah Thompson         | s.thompson@work.com | email      |          |
-        | Willow Finance Pty Ltd |         80123456789 | abn        | Willow   |
-        | Marcus Williams        |          0433859120 | mobile     |          |
+        | Alexandra Smith        | a.smith@example.com | EMAIL      | Lexi     |
+        | Andy Bolton            |          0412784539 | TELEPHONE  | AndyB    |
+        | Sarah Thompson         | s.thompson@work.com | EMAIL      |          |
+        | Willow Finance Pty Ltd |         80123456789 | ABN        | Willow   |
+        | Marcus Williams        |          0433859120 | TELEPHONE  |          |
 
     Example: Payees are displayed with correct formatting
       When Rachael views her address book
       Then her payees should be presented as follows:
         | Display Name                    | PayID               |
         | Alexandra Smith (Lexi)          | a.smith@example.com |
-        | Andy Bolton (AndyB)             |        0412 784 539 |
-        | Marcus Williams                 |        0433 859 120 |
+        | Andy Bolton (AndyB)             |          0412784539 |
+        | Marcus Williams                 |          0433859120 |
         | Sarah Thompson                  | s.thompson@work.com |
         | Willow Finance Pty Ltd (Willow) |         80123456789 |
 
@@ -29,16 +29,16 @@ Feature: View Payees in PayID Address Book
     Background:
       Given Rachael has the following payees in her address book:
         | Payee Name      | PayID            | PayID Type | Nickname |
-        | John Mitchell   | john@example.com | email      |          |
-        | Tech Corp Ltd   |      12345678901 | abn        |          |
-        | Rebecca Johnson |       0456321098 | mobile     |          |
+        | John Mitchell   | john@example.com | EMAIL      |          |
+        | Tech Corp Ltd   |      12345678901 | ABN        |          |
+        | Rebecca Johnson |       0456321098 | TELEPHONE  |          |
 
     Example: Payees without nicknames show name only
       When Rachael views her address book
       Then her payees should be presented as follows:
         | Display Name    | PayID            |
         | John Mitchell   | john@example.com |
-        | Rebecca Johnson |     0456 321 098 |
+        | Rebecca Johnson |       0456321098 |
         | Tech Corp Ltd   |      12345678901 |
 
   Rule: Mobile PayID values should be formatted with spaces in the display
@@ -46,17 +46,17 @@ Feature: View Payees in PayID Address Book
     Background:
       Given Rachael has the following payees in her address book:
         | Payee Name    | PayID      | PayID Type | Nickname |
-        | Mobile User 1 | 0412345678 | mobile     | Mob1     |
-        | Mobile User 2 | 0433987654 | mobile     |          |
-        | Mobile User 3 | 0456111222 | mobile     | Mobile3  |
+        | Mobile User 1 | 0412345678 | TELEPHONE  | Mob1     |
+        | Mobile User 2 | 0433987654 | TELEPHONE  |          |
+        | Mobile User 3 | 0456111222 | TELEPHONE  | Mobile3  |
 
     Example: Mobile numbers are displayed with proper Australian formatting
       When Rachael views her address book
       Then her payees should be presented as follows:
-        | Display Name            | PayID        |
-        | Mobile User 1 (Mob1)    | 0412 345 678 |
-        | Mobile User 2           | 0433 987 654 |
-        | Mobile User 3 (Mobile3) | 0456 111 222 |
+        | Display Name            | PayID      |
+        | Mobile User 1 (Mob1)    | 0412345678 |
+        | Mobile User 2           | 0433987654 |
+        | Mobile User 3 (Mobile3) | 0456111222 |
 
   Rule: Empty address book should show appropriate message
 
@@ -72,14 +72,14 @@ Feature: View Payees in PayID Address Book
     Background:
       Given Rachael has the following payees in her address book:
         | Payee Name  | PayID             | PayID Type | Nickname |
-        | Zoe Adams   | zoe@example.com   | email      | Z        |
-        | Alice Brown | alice@example.com | email      |          |
-        | Bob Charlie |        0412345678 | mobile     | Bobby    |
+        | Zoe Adams   | zoe@example.com   | EMAIL      | Z        |
+        | Alice Brown | alice@example.com | EMAIL      |          |
+        | Bob Charlie |        0412345678 | TELEPHONE  | Bobby    |
 
     Example: Payees are sorted alphabetically by name
       When Rachael views her address book
       Then her payees should be presented as follows:
         | Display Name        | PayID             |
         | Alice Brown         | alice@example.com |
-        | Bob Charlie (Bobby) |      0412 345 678 |
+        | Bob Charlie (Bobby) |        0412345678 |
         | Zoe Adams (Z)       | zoe@example.com   |

@@ -71,13 +71,13 @@ GET /api/payees/search?q=alex
     {
       "payeeName": "Alexandra Smith",
       "payID": "a.smith@example.com",
-      "payIDType": "email",
+      "payIDType": "EMAIL",
       "nickname": "Lexi"
     },
     {
       "payeeName": "Alex Wilson",
       "payID": "alex.w@example.com",
-      "payIDType": "email",
+      "payIDType": "EMAIL",
       "nickname": null
     }
   ]
@@ -93,8 +93,8 @@ GET /api/payees/search?q=alex
   "results": [
     {
       "payeeName": "Andy Bolton",
-      "payID": "0412 784 539",
-      "payIDType": "mobile",
+      "payID": "0412784539",
+      "payIDType": "TELEPONE",
       "nickname": "AndyB"
     }
   ]
