@@ -1,11 +1,23 @@
 import { useState } from 'react';
 import PayeeAddressBook from './components/PayeeAddressBook';
 import AddNewPayee from './components/AddNewPayee';
+import type { PayeeData } from './types/payee';
 
 type TabType = 'address-book' | 'add-payee';
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabType>('address-book');
+
+  const handlePayeeAdded = (payee: PayeeData) => {
+    console.log('Payee added successfully:', payee);
+    // Switch back to address book to show the new payee
+    setActiveTab('address-book');
+  };
+
+  const handleAddPayeeCancel = () => {
+    // Switch back to address book when user cancels
+    setActiveTab('address-book');
+  };
 
   return (
     <div>
@@ -62,7 +74,7 @@ function App() {
               id="add-payee-panel"
               aria-labelledby="add-payee-tab"
             >
-              <AddNewPayee />
+              <AddNewPayee onSuccess={handlePayeeAdded} onCancel={handleAddPayeeCancel} />
             </div>
           )}
         </div>

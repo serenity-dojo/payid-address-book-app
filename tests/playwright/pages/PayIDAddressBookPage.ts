@@ -13,7 +13,9 @@ export class PayIDAddressBookPage {
   readonly payeeListLoading: Locator;
   readonly payeeListEmpty: Locator;
   readonly payeeList: Locator;
-  readonly addPayeePlaceholder: Locator;
+  readonly addPayeeForm: Locator;
+  readonly addPayeeNameInput: Locator;
+  readonly addPayeeValidateButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -28,7 +30,9 @@ export class PayIDAddressBookPage {
     this.payeeListLoading = page.locator('.payee-list-loading');
     this.payeeListEmpty = page.locator('.payee-list-empty');
     this.payeeList = page.locator('.payee-list');
-    this.addPayeePlaceholder = page.locator('text=PayID payee form will be implemented here');
+    this.addPayeeForm = page.locator('form[role="form"]');
+    this.addPayeeNameInput = page.locator('input#payee-name');
+    this.addPayeeValidateButton = page.locator('button', { hasText: 'Validate PayID' });
   }
 
   async goto() {

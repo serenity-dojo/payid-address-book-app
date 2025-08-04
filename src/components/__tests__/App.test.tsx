@@ -49,9 +49,11 @@ describe('App Component', () => {
     const addPayeeTab = screen.getByRole('tab', { name: /add new payee/i });
     fireEvent.click(addPayeeTab);
     
-    // Add payee content should now be visible - use heading to be more specific
+    // Add payee content should now be visible - check for form elements
     expect(screen.getByRole('heading', { name: /add new payee/i })).toBeInTheDocument();
-    expect(screen.getByText(/payid payee form will be implemented here/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/payee name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/payid type/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /validate payid/i })).toBeInTheDocument();
   });
 
   it('has proper ARIA attributes for accessibility', () => {

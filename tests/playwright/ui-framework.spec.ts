@@ -62,6 +62,8 @@ test.describe('PayID Address Book UI Framework', () => {
     expect(hasLoading || hasEmpty || hasList).toBeTruthy();
     
     await page.clickAddNewPayeeTab();
-    await expect(page.addPayeePlaceholder).toBeVisible();
+    await expect(page.addPayeeForm).toBeVisible();
+    await expect(page.addPayeeNameInput).toBeVisible();
+    await expect(page.addPayeeValidateButton).toBeVisible();
   });
 });
