@@ -31,7 +31,7 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
     payidType: 'email',
     payid: ''
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [isValidating, setIsValidating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,14 +70,14 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
         }
       };
     }
-    
+
     if (payid === 'notfound@example.com') {
       return { isValid: false, error: 'PAYID_NOT_FOUND' };
     }
-    
+
     if (payid === 'invalid@format') {
-      return { 
-        isValid: false, 
+      return {
+        isValid: false,
         error: 'INVALID_PAYID_FORMAT',
         expectedFormat: 'user@domain.com (maximum 256 characters, lowercase)'
       };
@@ -85,12 +85,12 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
 
     // For valid formats, generate a demo response
     if (validatePayIDFormat(payid, type)) {
-      const name = type === 'email' 
+      const name = type === 'email'
         ? payid.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
         : type === 'mobile'
-        ? `Mobile User ${payid.slice(-4)}`
-        : `Business ${payid.slice(-4)} Pty Ltd`;
-        
+          ? `Mobile User ${payid.slice(-4)}`
+          : `Business ${payid.slice(-4)} Pty Ltd`;
+
       return {
         isValid: true,
         payee: {
@@ -102,20 +102,20 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
         }
       };
     }
-    
+
     return { isValid: false, error: 'INVALID_PAYID_FORMAT' };
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear validation result when PayID or type changes
     if (field === 'payid' || field === 'payidType') {
       setValidationResult(null);
       setStep('enter-payid');
       setIsConfirmed(false);
     }
-    
+
     // Clear field-specific errors
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -129,11 +129,11 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
   const handleInputBlur = () => {
     // Validate PayID format on blur
     if (formData.payid.trim() && !validatePayIDFormat(formData.payid, formData.payidType)) {
-      const errorMessage = formData.payidType === 'email' 
+      const errorMessage = formData.payidType === 'email'
         ? 'Please enter a valid email address'
         : formData.payidType === 'mobile'
-        ? 'Please enter a valid Australian mobile number'
-        : 'Please enter a valid 11-digit ABN';
+          ? 'Please enter a valid Australian mobile number'
+          : 'Please enter a valid 11-digit ABN';
       setErrors(prev => ({ ...prev, payid: errorMessage }));
     } else {
       setErrors(prev => ({ ...prev, payid: undefined }));
@@ -157,7 +157,7 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
       // Check if we're in demo mode
       const isDemoMode = payeeService.isDemoMode();
       let result: PayIDValidationResult;
-      
+
       if (isDemoMode) {
         // Use demo validation
         result = getDemoValidationResult(formData.payid, formData.payidType);
@@ -166,9 +166,9 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
         const payIdType = formData.payidType.toUpperCase() as PayIDType;
         result = await validationService.current.validatePayID(formData.payid, payIdType);
       }
-      
+
       setValidationResult(result);
-      
+
       if (result.isValid) {
         setStep('confirm-payee');
       } else {
@@ -208,7 +208,7 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validationResult?.isValid || !isConfirmed) {
       return;
     }
@@ -257,7 +257,7 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
   return (
     <div>
       <h2>Add New Payee</h2>
-      
+
       <form role="form" onSubmit={handleSubmit}>
         {step === 'enter-payid' && (
           <>
@@ -296,6 +296,7 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
             <div className="payid-input-group">
               <input
                 id="payid"
+                data-testid="payid"
                 type="text"
                 className="payid-input"
                 value={formData.payid}
@@ -303,7 +304,7 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
                 onBlur={handleInputBlur}
                 placeholder={
                   formData.payidType === 'email' ? 'user@example.com' :
-                  formData.payidType === 'mobile' ? '0412 345 678' : '12345678901'
+                    formData.payidType === 'mobile' ? '0412 345 678' : '12345678901'
                 }
                 aria-describedby={errors.payid ? 'payid-error' : undefined}
               />
@@ -332,15 +333,16 @@ function AddNewPayee({ onSuccess, onCancel }: Props) {
             <div className="validation-result">
               <div className="success-message">
                 <h3>PayID Found</h3>
-                <p><strong>Name:</strong> {validationResult.payee?.payIdOwnerCommonName}</p>
-                <p><strong>PayID:</strong> {formData.payid}</p>
-                <p><strong>Type:</strong> {formData.payidType.toUpperCase()}</p>
+                <p data-testid='payid-name'><strong>Name:</strong> {validationResult.payee?.payIdOwnerCommonName}</p>
+                <p data-testid='payid-id'><strong>PayID:</strong> {formData.payid}</p>
+                <p data-testid='payid-type'><strong>Type:</strong> {formData.payidType.toUpperCase()}</p>
               </div>
-              
+
               <div className="confirmation-checkbox">
                 <label>
                   <input
                     type="checkbox"
+                    data-testid="confirmation-checkbox"
                     checked={isConfirmed}
                     onChange={(e) => handleConfirmationChange(e.target.checked)}
                   />

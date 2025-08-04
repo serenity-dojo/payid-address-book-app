@@ -107,7 +107,7 @@ Feature: Search for a Payee in my PayID Address Book
         | Payee Name             | PayID                 |
         | Alex Wilson            | alex.w@example.com    |
         | William Thomson        | w.thomson@example.com |
-        | Willow Finance Pty Ltd | 80123456789           |
+        | Willow Finance Pty Ltd |           80123456789 |
 
   Rule: If no payees match the search, a “no results” message is displayed
 

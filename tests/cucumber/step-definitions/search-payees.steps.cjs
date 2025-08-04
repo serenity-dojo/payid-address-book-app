@@ -5,7 +5,7 @@ const { PayeeSearchPage } = require('../page-objects/PayeeSearchPage.cjs');
 // Background step - setting up payees in address book
 Given('Priya has the following payees in her address book:', async function (dataTable) {
   const payeesData = dataTable.hashes();
-  
+
   // Convert the data table to the API response format
   const payees = payeesData.map((row) => ({
     payeeName: row['Payee Name'],
@@ -20,7 +20,7 @@ Given('Priya has the following payees in her address book:', async function (dat
   // Initialize page object and navigate to the application
   this.payeeSearchPage = new PayeeSearchPage(this.page);
   await this.payeeSearchPage.navigateToApp();
-  
+
   // Set mock data using the payeeService (works in test mode due to HeadlessChrome detection)
   await this.page.evaluate((payeesData) => {
     // Convert API format back to internal format for mock service
@@ -43,7 +43,7 @@ Given('Priya has {int} payees in her address book with names starting with {stri
     'rah Moore', 'ina Taylor', 'rina Anderson', 'rah Thomas', 'ina Jackson', 'rina White', 'rah Harris',
     'ina Martin', 'rina Thompson', 'rah Garcia', 'ina Martinez', 'rina Robinson', 'rah Clark', 'ina Rodriguez'
   ];
-  
+
   const payees = [];
   for (let i = 1; i <= count; i++) {
     const variation = nameVariations[i % nameVariations.length];
@@ -61,7 +61,7 @@ Given('Priya has {int} payees in her address book with names starting with {stri
   // Initialize page object and navigate to the application
   this.payeeSearchPage = new PayeeSearchPage(this.page);
   await this.payeeSearchPage.navigateToApp();
-  
+
   // Set mock data using the payeeService (works in test mode due to HeadlessChrome detection)
   await this.page.evaluate((payeesData) => {
     // Convert API format back to internal format for mock service
@@ -89,21 +89,21 @@ When('Priya enters {string}', async function (inputText) {
 // Assertion steps - checking search results
 Then('she should see the following results:', async function (dataTable) {
   const expectedResults = dataTable.hashes();
-  
+
   // Get actual search results using page object
   const actualResults = await this.payeeSearchPage.getSearchResultData();
-  
+
   // Check that we have the expected number of results
   expect(actualResults.length).toBe(expectedResults.length);
-  
+
   // Verify each result matches the expected format
   for (let i = 0; i < expectedResults.length; i++) {
     const expectedResult = expectedResults[i];
     const actualResult = actualResults[i];
-    
+
     // Verify the display name contains the expected payee name
     expect(actualResult.displayName).toContain(expectedResult['Payee Name']);
-    
+
     // Verify the PayID matches expected format
     const expectedPayId = expectedResult['PayID'].trim();
     expect(actualResult.payId).toBe(expectedPayId);
@@ -115,7 +115,7 @@ Then('she should see a message indicating no results were found', async function
   // Check that the no results message is displayed using page object
   const isNoResultsVisible = await this.payeeSearchPage.isNoResultsMessageVisible();
   expect(isNoResultsVisible).toBe(true);
-  
+
   const message = await this.payeeSearchPage.getNoResultsMessage();
   expect(message).toContain('No payees found');
 });
@@ -123,13 +123,13 @@ Then('she should see a message indicating no results were found', async function
 // Assertion steps - checking suggestions
 Then('the system should suggest the following payee names:', async function (dataTable) {
   const expectedSuggestions = dataTable.hashes();
-  
+
   // Get actual suggestions using page object
   const suggestionTexts = await this.payeeSearchPage.getSuggestionTexts();
-  
+
   // Check that we have the expected number of suggestions
   expect(suggestionTexts.length).toBe(expectedSuggestions.length);
-  
+
   // Verify each suggestion matches expected payee name
   for (let i = 0; i < expectedSuggestions.length; i++) {
     const expectedSuggestion = expectedSuggestions[i];
@@ -148,7 +148,7 @@ Then('no suggestions should be shown', async function () {
 Then('only the first {int} matching payee names should be suggested', async function (maxCount) {
   // Get suggestion count using page object
   const suggestionsCount = await this.payeeSearchPage.getSuggestionsCount();
-  
+
   // Check that we have no more than the maximum count
   expect(suggestionsCount).toBeLessThanOrEqual(maxCount);
   expect(suggestionsCount).toBe(maxCount); // Should be exactly the max since we have more payees

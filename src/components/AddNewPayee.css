@@ -1,0 +1,213 @@
+/* AddNewPayee Component Styles */
+
+.payid-type-selector {
+  margin-bottom: 2rem;
+}
+
+.payid-type-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.payid-type-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  font-size: 1rem;
+}
+
+.payid-type-button:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.payid-type-button.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: white;
+}
+
+.payid-type-button .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.payid-input-group {
+  margin-bottom: 2rem;
+}
+
+.payid-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.payid-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.validate-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 160px;
+}
+
+.validate-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.validate-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.confirmation-actions {
+  flex-wrap: wrap;
+}
+
+.add-payee-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 140px;
+}
+
+.add-payee-button:hover:not(:disabled) {
+  background-color: #1e7e34;
+}
+
+.add-payee-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.back-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 100px;
+}
+
+.back-button:hover {
+  background-color: #545b62;
+}
+
+.cancel-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 100px;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.validation-result {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.success-message {
+  margin-bottom: 1.5rem;
+}
+
+.success-message h3 {
+  color: #28a745;
+  margin-bottom: 1rem;
+}
+
+.success-message p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.confirmation-checkbox {
+  margin-top: 1.5rem;
+}
+
+.confirmation-checkbox label {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.confirmation-checkbox input[type="checkbox"] {
+  margin-right: 0.75rem;
+  transform: scale(1.2);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .payid-type-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .payid-type-button {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .confirmation-actions {
+    gap: 0.5rem;
+  }
+}
