@@ -24,6 +24,7 @@ export const PAYEE_CONSTANTS = {
   ERRORS: {
     SEARCH_FAILED: 'Failed to search payees',
     LOAD_FAILED: 'Failed to load payees',
+    ADD_FAILED: 'Failed to add payee',
     INVALID_RESPONSE: 'Invalid API response format',
     INVALID_SEARCH_TERM: 'Invalid search term provided',
     NETWORK_ERROR: 'Network error occurred'

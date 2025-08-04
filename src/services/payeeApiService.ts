@@ -48,6 +48,32 @@ export class PayeeApiService {
   }
 
   /**
+   * Add a new payee via API
+   */
+  async addPayee(payee: PayeeData): Promise<PayeeData> {
+    const response = await fetch('/api/payees', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: payee.id,
+        payeeName: payee.name,
+        payID: payee.payid,
+        payIDType: payee.payidType,
+        nickname: payee.nickname
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return this.normalizeApiResponse(data);
+  }
+
+  /**
    * Normalize API response to consistent PayeeData format
    */
   private normalizeApiResponse(result: any): PayeeData {

@@ -1,4 +1,4 @@
-import type { DisplayPayee } from '../types/payee';
+import type { DisplayPayee, PayeeData } from '../types/payee';
 import { PAYEE_CONSTANTS } from '../constants/payeeConstants';
 import { formatPayeesForDisplay } from '../utils/payeeUtils';
 import { validateSearchTerm, sanitizeSearchTerm } from '../utils/inputValidation';
@@ -96,6 +96,37 @@ class PayeeService {
    */
   getPayeeCount(): number {
     return this.mockService.getPayeeCount();
+  }
+
+  /**
+   * Add a new payee
+   */
+  async addPayee(payeeData: Omit<PayeeData, 'id'>): Promise<PayeeData> {
+    try {
+      // Generate unique ID
+      const id = this.generateUniqueId();
+      
+      const newPayee: PayeeData = {
+        id,
+        ...payeeData
+      };
+
+      if (this.shouldUseApi()) {
+        return await this.apiService.addPayee(newPayee);
+      } else {
+        return await this.mockService.addPayee(newPayee);
+      }
+    } catch (error) {
+      console.error('Error adding payee:', error);
+      throw new Error(PAYEE_CONSTANTS.ERRORS.ADD_FAILED || 'Failed to add payee');
+    }
+  }
+
+  /**
+   * Generate a unique ID for new payees
+   */
+  private generateUniqueId(): string {
+    return `payee_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**

@@ -55,6 +55,17 @@ export class PayeeMockService {
   }
 
   /**
+   * Add a new payee
+   */
+  async addPayee(payee: PayeeData): Promise<PayeeData> {
+    const delay = this.isDemoMode ? PAYEE_CONSTANTS.DEMO_DELAY_MS : PAYEE_CONSTANTS.TEST_DELAY_MS;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    this.mockPayees.push(payee);
+    return { ...payee };
+  }
+
+  /**
    * Get count of loaded payees
    */
   getPayeeCount(): number {

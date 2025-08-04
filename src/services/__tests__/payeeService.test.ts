@@ -218,4 +218,115 @@ describe('PayeeService', () => {
       expect(payees).toHaveLength(0);
     });
   });
+
+  describe('addPayee', () => {
+    it('should add a new email payee successfully', async () => {
+      const payeeData = {
+        name: 'John Smith',
+        payid: 'john@example.com',
+        payidType: 'email' as const,
+        nickname: 'Johnny'
+      };
+
+      const addedPayee = await payeeService.addPayee(payeeData);
+
+      expect(addedPayee.id).toBeDefined();
+      expect(addedPayee.name).toBe('John Smith');
+      expect(addedPayee.payid).toBe('john@example.com');
+      expect(addedPayee.payidType).toBe('email');
+      expect(addedPayee.nickname).toBe('Johnny');
+
+      // Verify it was added to the list
+      const allPayees = await payeeService.getAllPayees();
+      expect(allPayees).toHaveLength(1);
+      expect(allPayees[0].displayName).toBe('John Smith (Johnny)');
+    });
+
+    it('should add a new mobile payee successfully', async () => {
+      const payeeData = {
+        name: 'Jane Doe',
+        payid: '0412345678',
+        payidType: 'mobile' as const
+      };
+
+      const addedPayee = await payeeService.addPayee(payeeData);
+
+      expect(addedPayee.name).toBe('Jane Doe');
+      expect(addedPayee.payid).toBe('0412345678');
+      expect(addedPayee.payidType).toBe('mobile');
+      expect(addedPayee.nickname).toBeUndefined();
+
+      // Verify formatting in display
+      const allPayees = await payeeService.getAllPayees();
+      expect(allPayees[0].formattedPayID).toBe('0412 345 678');
+    });
+
+    it('should add a new ABN payee successfully', async () => {
+      const payeeData = {
+        name: 'Test Business Pty Ltd',
+        payid: '80123456789',
+        payidType: 'abn' as const,
+        nickname: 'TestBiz'
+      };
+
+      const addedPayee = await payeeService.addPayee(payeeData);
+
+      expect(addedPayee.name).toBe('Test Business Pty Ltd');
+      expect(addedPayee.payid).toBe('80123456789');
+      expect(addedPayee.payidType).toBe('abn');
+      expect(addedPayee.nickname).toBe('TestBiz');
+    });
+
+    it('should generate unique IDs for different payees', async () => {
+      const payee1 = await payeeService.addPayee({
+        name: 'User One',
+        payid: 'one@example.com',
+        payidType: 'email'
+      });
+
+      const payee2 = await payeeService.addPayee({
+        name: 'User Two',
+        payid: 'two@example.com',
+        payidType: 'email'
+      });
+
+      expect(payee1.id).toBeDefined();
+      expect(payee2.id).toBeDefined();
+      expect(payee1.id).not.toBe(payee2.id);
+    });
+
+    it('should maintain sort order after adding payees', async () => {
+      await payeeService.addPayee({
+        name: 'Zoe Adams',
+        payid: 'zoe@example.com',
+        payidType: 'email'
+      });
+
+      await payeeService.addPayee({
+        name: 'Alice Brown',
+        payid: 'alice@example.com',
+        payidType: 'email'
+      });
+
+      const allPayees = await payeeService.getAllPayees();
+      expect(allPayees).toHaveLength(2);
+      expect(allPayees[0].displayName).toBe('Alice Brown');
+      expect(allPayees[1].displayName).toBe('Zoe Adams');
+    });
+
+    it('should handle payees without nicknames', async () => {
+      const payeeData = {
+        name: 'No Nickname User',
+        payid: 'nonick@example.com',
+        payidType: 'email' as const
+      };
+
+      const addedPayee = await payeeService.addPayee(payeeData);
+
+      expect(addedPayee.nickname).toBeUndefined();
+
+      const allPayees = await payeeService.getAllPayees();
+      expect(allPayees[0].displayName).toBe('No Nickname User');
+    });
+  });
 });
