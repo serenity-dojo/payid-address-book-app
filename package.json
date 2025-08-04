@@ -14,14 +14,16 @@
     "test:cucumber:dry": "npx cucumber-js --config cucumber.config.cjs --dry-run",
     "test:cucumber:watch": "npx cucumber-js --config cucumber.config.cjs --watch",
     "test:cucumber:report": "npx cucumber-js --config cucumber.config.cjs && echo '📊 Report generated at reports/cucumber-report.html'",
+    "test:cucumber:with-server": "start-server-and-test dev http://localhost:5173 test:cucumber",
+    "test:cucumber:with-server-and-report": "start-server-and-test dev http://localhost:5173 test:cucumber:report",
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
     "test:playwright:headed": "playwright test --headed",
     "test:unit": "vitest",
     "test:unit:ui": "vitest --ui",
     "test:unit:coverage": "vitest --coverage",
-    "test:all": "npm run test:cucumber && npm run test:unit run && npm run test:playwright",
-    "test:all:report": "npm run test:cucumber:report && npm run test:unit run && npm run test:playwright && echo '✅ All tests completed successfully!'"
+    "test:all": "npm run test:unit run && npm run test:playwright && test:cucumber:with-server",
+    "test:all:report": "npm run npm run test:unit run && npm run test:playwright && test:cucumber:with-server-and-report && echo '✅ All tests completed successfully!'"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -47,6 +49,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "jsdom": "^26.1.0",
+    "start-server-and-test": "^2.0.13",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",

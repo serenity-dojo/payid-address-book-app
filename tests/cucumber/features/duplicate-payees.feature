@@ -1,7 +1,7 @@
 Feature: Prevent adding duplicate PayID payees
   As a retail banking customer
   I want to avoid saving the same PayID more than once in my address book
-  So I don’t end up with duplicate payees when making a payment
+  So I don't end up with duplicate payees when making a payment
 
   Rule: A PayID that already exists in the address book cannot be added again
 
