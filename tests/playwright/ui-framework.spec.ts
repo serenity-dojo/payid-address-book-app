@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { PayIDAddressBookPage } from './pages/PayIDAddressBookPage';
 
-test.describe('PayID Address Book UI Framework', () => {
+test.describe('PayID Address Book UI', () => {
   let page: PayIDAddressBookPage;
 
   test.beforeEach(async ({ page: playwright }) => {
@@ -9,7 +9,7 @@ test.describe('PayID Address Book UI Framework', () => {
     await page.goto();
   });
 
-  test('should display the main app with correct CBA branding', async () => {
+  test('should display the main app with correct branding', async () => {
     await expect(page.title).toContainText('PayID Address Book');
     await expect(page.header).toBeVisible();
     await expect(page.header).toHaveClass('app-header');
@@ -42,45 +42,4 @@ test.describe('PayID Address Book UI Framework', () => {
     await expect(page.payeeAddressBookTab).toHaveAttribute('id', 'address-book-tab');
     await expect(page.payeeAddressBookPanel).toHaveAttribute('aria-labelledby', 'address-book-tab');
   });
-
-  // test('should display payee list content in address book tab', async ({ page: playwright }) => {
-  //   // Mock the API to return empty payees for this test
-  //   await playwright.route('**/api/payees', async (route) => {
-  //     await route.fulfill({
-  //       status: 200,
-  //       contentType: 'application/json',
-  //       body: JSON.stringify({
-  //         payees: [
-  //           {
-  //             id: '1',
-  //             name: 'John Doe',
-  //             payid: 'john.doe@example.com',
-  //             payidType: 'EMAIL',
-  //             nickname: 'Johnny'
-  //           },
-  //           {
-  //             id: '2',
-  //             name: 'Jane Smith',
-  //             payid: 'jane.smith@example.com',
-  //             payidType: 'EMAIL',
-  //             nickname: 'Janey'
-  //           }
-  //         ]
-  //       })
-  //     });
-  //   });
-
-  //   await page.waitForPayeeListContent();
-
-  //   // Verify one of the payee list states is visible
-  //   const hasLoading = await page.payeeListLoading.isVisible();
-  //   const hasEmpty = await page.payeeListEmpty.isVisible();
-  //   const hasList = await page.payeeList.isVisible();
-  //   expect(hasLoading || hasEmpty || hasList).toBeTruthy();
-
-  //   await page.clickAddNewPayeeTab();
-  //   await expect(page.addPayeeForm).toBeVisible();
-  //   await expect(page.addPayeeNameInput).toBeVisible();
-  //   await expect(page.addPayeeValidateButton).toBeVisible();
-  // });
 });
