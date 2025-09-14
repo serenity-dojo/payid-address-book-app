@@ -41,8 +41,13 @@ class PayeeSearchPage {
   async performSearch(searchTerm) {
     await this.enterSearchTerm(searchTerm);
     await this.clickSearchButton();
-    // Wait for search to complete
-    await this.page.waitForTimeout(500);
+    // Wait for search to complete by waiting for results or no results message
+    await Promise.race([
+      this.page.waitForSelector('.payee-list .payee-item', { timeout: 3000 }),
+      this.page.waitForSelector('.payee-list-empty', { timeout: 3000 })
+    ]).catch(() => {
+      // Either results appeared or no results message - both are valid
+    });
   }
 
   async enterTextForSuggestions(inputText) {

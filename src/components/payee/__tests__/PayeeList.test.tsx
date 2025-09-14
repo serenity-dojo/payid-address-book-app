@@ -100,12 +100,14 @@ describe('PayeeList Component', () => {
     });
   });
 
-  it('should call payeeService.getAllPayees on mount', () => {
+  it('should call payeeService.getAllPayees on mount', async () => {
     mockPayeeService.getAllPayees.mockResolvedValue([]);
     
     render(<PayeeList />);
     
-    expect(mockPayeeService.getAllPayees).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockPayeeService.getAllPayees).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('should display payees in the order returned by service (already sorted)', async () => {
